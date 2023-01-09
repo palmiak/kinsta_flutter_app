@@ -1,7 +1,7 @@
 
 
 # Install Operating system and dependencies
-FROM ubuntu:20.04
+FROM ubuntu:20.04 AS build-env
 
 RUN apt-get update 
 RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata
@@ -27,8 +27,9 @@ RUN mkdir /app/
 COPY . /app/
 WORKDIR /app/
 RUN flutter build web
+RUN mkdir /test431/
 
-# make server startup script executable and start the web server
-RUN ["chmod", "+x", "/app/server/server.sh"]
-
-ENTRYPOINT [ "/app/server/server.sh"]
+# Stage 2 - Create the run-time image
+FROM nginx:1.21.1-alpine
+RUN mkdir /test123/
+COPY --from=build-env /app/build/web /usr/share/nginx/html

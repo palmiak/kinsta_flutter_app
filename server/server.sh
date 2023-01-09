@@ -1,7 +1,7 @@
-sh
-
 #!/bin/bash
+PORT=3000
 
+echo 'test'
 # Stop any program currently running on the set port
 #echo 'preparing port' $PORT '...'
 #fuser -k 5000/tcp
