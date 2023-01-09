@@ -1,7 +1,7 @@
 
 
 # Install Operating system and dependencies
-FROM ubuntu:20.04 AS build-env
+FROM ubuntu:20.04
 
 RUN apt-get update 
 RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata
@@ -12,7 +12,7 @@ RUN apt-get clean
 RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
 
 # Set flutter environment path
-ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
+ENV PATH="/app/server/:/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
 # Run flutter doctor
 RUN flutter doctor
@@ -26,10 +26,9 @@ RUN flutter config --enable-web
 RUN mkdir /app/
 COPY . /app/
 WORKDIR /app/
-RUN flutter build web
-RUN mkdir /test431/
+#RUN flutter build web
 
-# Stage 2 - Create the run-time image
-FROM nginx:1.21.1-alpine
-RUN mkdir /test123/
-COPY --from=build-env /app/build/web /usr/share/nginx/html
+# make server startup script executable and start the web server
+WORKDIR /app/
+RUN ["chmod", "+x", "/app/server.sh"]
+ENTRYPOINT ["/app/server.sh"]
